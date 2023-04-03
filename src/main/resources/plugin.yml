@@ -11,7 +11,7 @@ commands:
     usage: /enhance
   giveblackstone:
     description: Gives the player a specified amount of Black Stones
-    usage: /giveblackstone <weapon|armor> <amount>
+    usage: /giveblackstone <weapon|armor|cweapon|carmor> <amount>
   reloadconfig:
     description: Reloads the plugin's config.yml
     usage: /reloadconfig

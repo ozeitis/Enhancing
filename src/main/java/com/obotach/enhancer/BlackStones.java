@@ -2,6 +2,7 @@ package com.obotach.enhancer;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -15,6 +16,8 @@ public class BlackStones {
 
         if (meta != null) {
             meta.displayName(Component.text("Black Stone (Weapon)"));
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             PersistentDataContainer data = meta.getPersistentDataContainer();
             data.set(BlackStoneKeys.BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER, 1);
             blackStoneWeapon.setItemMeta(meta);
@@ -29,6 +32,8 @@ public class BlackStones {
 
         if (meta != null) {
             meta.displayName(Component.text("Black Stone (Armor)"));
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             PersistentDataContainer data = meta.getPersistentDataContainer();
             data.set(BlackStoneKeys.BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER, 1);
             blackStoneArmor.setItemMeta(meta);
@@ -37,9 +42,44 @@ public class BlackStones {
         return blackStoneArmor;
     }
 
+    public static ItemStack createConcentratedMagicalBlackStoneWeapon() {
+        ItemStack concentratedMagicalBlackStoneWeapon = new ItemStack(Material.RED_DYE, 1);
+        ItemMeta meta = concentratedMagicalBlackStoneWeapon.getItemMeta();
+
+        if (meta != null) {
+            meta.displayName(Component.text("§cConcentrated Magical Black Stone (Weapon)"));
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            data.set(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER, 1);
+            concentratedMagicalBlackStoneWeapon.setItemMeta(meta);
+        }
+
+        return concentratedMagicalBlackStoneWeapon;
+    }
+
+    public static ItemStack createConcentratedMagicalBlackStoneArmor() {
+        ItemStack concentratedMagicalBlackStoneArmor = new ItemStack(Material.CYAN_DYE, 1);
+        ItemMeta meta = concentratedMagicalBlackStoneArmor.getItemMeta();
+
+        if (meta != null) {
+            meta.displayName(Component.text("§cConcentrated Magical Black Stone (Armor)"));
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            data.set(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER, 1);
+            concentratedMagicalBlackStoneArmor.setItemMeta(meta);
+        }
+
+        return concentratedMagicalBlackStoneArmor;
+    }
+
     public class BlackStoneKeys {
         public static final NamespacedKey BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "black_stone_weapon");
         public static final NamespacedKey BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "black_stone_armor");
+        
+        public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "concentrated_magical_black_stone_weapon");
+        public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "concentrated_magical_black_stone_armor");
     }
 
 }

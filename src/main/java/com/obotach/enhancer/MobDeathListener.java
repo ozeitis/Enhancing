@@ -37,7 +37,6 @@ public class MobDeathListener implements Listener {
     }
 
     private boolean shouldDropBlackStone() {
-        // return random.nextInt(100) < 1;
-        return true;
+        return random.nextInt(100) < 1;
     }
 }

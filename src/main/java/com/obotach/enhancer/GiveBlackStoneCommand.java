@@ -45,8 +45,12 @@ public class GiveBlackStoneCommand implements CommandExecutor {
                 blackStone = BlackStones.createBlackStoneWeapon();
             } else if (itemType.equals("armor")) {
                 blackStone = BlackStones.createBlackStoneArmor();
+            } else if (itemType.equals("cweapon")) {
+                blackStone = BlackStones.createConcentratedMagicalBlackStoneWeapon();
+            } else if (itemType.equals("carmor")) {
+                blackStone = BlackStones.createConcentratedMagicalBlackStoneArmor();
             } else {
-                player.sendMessage("Usage: /giveblackstone <weapon|armor> <amount>");
+                player.sendMessage("Usage: /giveblackstone <weapon|armor|cweapon|carmor> <amount>");
                 return true;
             }
 
@@ -54,7 +58,7 @@ public class GiveBlackStoneCommand implements CommandExecutor {
             player.getInventory().addItem(blackStone);
             player.sendMessage("You have received " + amount + " Black Stone(s) (" + itemType + ").");
         } else {
-            player.sendMessage("Usage: /giveblackstone <weapon|armor> <amount>");
+            player.sendMessage("Usage: /giveblackstone <weapon|armor|cweapon|carmor> <amount>");
         }
 
         return true;
