@@ -32,6 +32,11 @@ public class EnhanceItemCommand implements CommandExecutor {
             return true;
         }
 
+        if (!sender.hasPermission("enhancing.enhanceitem")) {
+            sender.sendMessage(Component.text("§cYou do not have permission to use this command."));
+            return true;
+        }
+
         if (args.length != 1) {
             sender.sendMessage("Usage: /enhanceitem <level>");
             return true;

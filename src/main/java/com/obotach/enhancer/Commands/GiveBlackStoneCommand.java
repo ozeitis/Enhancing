@@ -20,8 +20,13 @@ public class GiveBlackStoneCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("enhancing.giveblackstone")) {
+            sender.sendMessage("You do not have permission to use this command.");
+            return true;
+        }
+
         if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be executed by a player.");
+            sender.sendMessage("This command can only be used by a player.");
             return true;
         }
         

@@ -1,20 +1,24 @@
 name: Enhancing
-version: 0.1.0
+version: 1.0.1
 main: com.obotach.enhancer.Enhancing
 description: Yes, it's a plugin that enhances items!
 author: Oze Botach
-website: https://successvariable.com
+website: https://www.spigotmc.org/resources/enhancing.109037/
 api-version: 1.19
 commands:
   enhance:
     description: Opens the enhance item GUI.
     usage: /enhance
+    permission: enhancing.enhance
   giveblackstone:
     description: Gives the player a specified amount of Black Stones
     usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>
+    permission: enhancing.giveblackstone
   enhanceitem:
     description: Enhance an item to the specified level
     usage: /<command> <level>
+    permission: enhancing.enhanceitem
   reloadconfig:
     description: Reloads the plugin's config.yml
     usage: /reloadconfig
+    permission: enhancing.reloadconfig
