@@ -1,16 +1,20 @@
-package com.obotach.enhancer;
+package com.obotach.enhancer.Commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.obotach.enhancer.BlackStones;
+import com.obotach.enhancer.Enhancing;
+
 public class GiveBlackStoneCommand implements CommandExecutor {
 
-    private final Enhancer plugin;
+    private final Enhancing plugin;
 
-    public GiveBlackStoneCommand(Enhancer plugin) {
+    public GiveBlackStoneCommand(Enhancing plugin) {
         this.plugin = plugin;
     }
 
@@ -20,15 +24,21 @@ public class GiveBlackStoneCommand implements CommandExecutor {
             sender.sendMessage("This command can only be executed by a player.");
             return true;
         }
-
+        
         Player player = (Player) sender;
 
-        if (args.length == 2) {
-            String itemType = args[0].toLowerCase();
+        if (args.length == 3) {
+            Player targetPlayer = Bukkit.getPlayer(args[0]);
+            if (targetPlayer == null) {
+                sender.sendMessage("Invalid player. Please enter a valid player name.");
+                return true;
+            }
+
+            String itemType = args[1].toLowerCase();
             int amount;
 
             try {
-                amount = Integer.parseInt(args[1]);
+                amount = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
                 player.sendMessage("Invalid amount. Please enter a valid number.");
                 return true;
@@ -50,15 +60,16 @@ public class GiveBlackStoneCommand implements CommandExecutor {
             } else if (itemType.equals("carmor")) {
                 blackStone = BlackStones.createConcentratedMagicalBlackStoneArmor();
             } else {
-                player.sendMessage("Usage: /giveblackstone <weapon|armor|cweapon|carmor> <amount>");
+                sender.sendMessage("Usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>");
                 return true;
             }
 
             blackStone.setAmount(amount);
-            player.getInventory().addItem(blackStone);
-            player.sendMessage("You have received " + amount + " Black Stone(s) (" + itemType + ").");
+            targetPlayer.getInventory().addItem(blackStone);
+            targetPlayer.sendMessage("You have received " + amount + " Black Stone(s) (" + itemType + ").");
+            player.sendMessage("You have given " + amount + " Black Stone(s) (" + itemType + ") to " + targetPlayer.getName() + ".");
         } else {
-            player.sendMessage("Usage: /giveblackstone <weapon|armor|cweapon|carmor> <amount>");
+            sender.sendMessage("Usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>");
         }
 
         return true;

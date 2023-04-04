@@ -1,15 +1,27 @@
-package com.obotach.enhancer;
+package com.obotach.enhancer.Listeners;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.obotach.enhancer.BlackStones;
+import com.obotach.enhancer.Enhancing;
+
 import java.util.Random;
 
 public class MobDeathListener implements Listener {
     private final Random random = new Random();
+    private double blackStoneDropChance;
+    private double concentratedBlackStoneDropChance;
+
+    public MobDeathListener(double blackStoneDropChance, double concentratedBlackStoneDropChance) {
+        this.blackStoneDropChance = blackStoneDropChance;
+        this.concentratedBlackStoneDropChance = concentratedBlackStoneDropChance;
+    }
 
     @EventHandler
     public void onMobDeath(EntityDeathEvent event) {
@@ -17,6 +29,10 @@ public class MobDeathListener implements Listener {
 
         if (isHostileMob(entity) && shouldDropBlackStone()) {
             ItemStack blackStone = random.nextBoolean() ? BlackStones.createBlackStoneWeapon() : BlackStones.createBlackStoneArmor();
+            entity.getWorld().dropItemNaturally(entity.getLocation(), blackStone);
+        }
+        if (isHostileMob(entity) && shouldDropConcentratedBlackStone()) {
+            ItemStack blackStone = random.nextBoolean() ? BlackStones.createConcentratedMagicalBlackStoneWeapon() : BlackStones.createConcentratedMagicalBlackStoneArmor();
             entity.getWorld().dropItemNaturally(entity.getLocation(), blackStone);
         }
     }
@@ -37,6 +53,10 @@ public class MobDeathListener implements Listener {
     }
 
     private boolean shouldDropBlackStone() {
-        return random.nextInt(100) < 1;
+        return random.nextInt(100) < blackStoneDropChance;
+    }
+
+    private boolean shouldDropConcentratedBlackStone() {
+        return random.nextInt(100) < concentratedBlackStoneDropChance;
     }
 }

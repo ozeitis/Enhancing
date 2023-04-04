@@ -1,4 +1,4 @@
-package com.obotach.enhancer;
+package com.obotach.enhancer.Listeners;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -28,14 +28,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import com.obotach.enhancer.EnhanceGUI;
+import com.obotach.enhancer.Enhancing;
+import com.obotach.enhancer.Utils;
 import com.obotach.enhancer.BlackStones.BlackStoneKeys;
+import com.obotach.enhancer.EnhancementInfo;
 
 public class EnhanceGUIListener implements Listener {
+    public static final NamespacedKey ENHANCEMENT_LEVEL_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "enhancement_level");
+    // plugin preifx from config
+    private final String prefix = Enhancing.getPlugin(Enhancing.class).getConfig().getString("plugin-prefix");
     private final Map<UUID, Integer> enhancementTasks;
 
-    private final Enhancer plugin;
-    public EnhanceGUIListener(Enhancer plugin) {
+    private final Enhancing plugin;
+    private EnhanceGUI enhanceGUI;
+
+    public EnhanceGUIListener(Enhancing plugin, EnhanceGUI enhanceGUI) {
         this.plugin = plugin;
+        this.enhanceGUI = enhanceGUI;
         this.enhancementTasks = new HashMap<>();
     }
 
@@ -69,7 +79,7 @@ public class EnhanceGUIListener implements Listener {
         InventoryAction action = event.getAction();
         if (clickedSlot == 10 || clickedSlot == 13 || action == InventoryAction.MOVE_TO_OTHER_INVENTORY || action == InventoryAction.SWAP_WITH_CURSOR) {
             // Call updateEnhanceButton() when the item or black stone is placed in the slot
-            updateEnhanceButton(event.getClickedInventory());
+            enhanceGUI.updateEnhanceButton(event.getClickedInventory());
         }
 
         // Check if the clicked slot is the enhance button
@@ -86,29 +96,21 @@ public class EnhanceGUIListener implements Listener {
                 return;
             }
 
-            if (isWeapon(itemToEnhance) && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER)) {
+            boolean isWeapon = isWeapon(itemToEnhance);
+            boolean isArmor = isArmor(itemToEnhance);
+            int enhancementLevel = itemToEnhance.getItemMeta().getPersistentDataContainer().getOrDefault(ENHANCEMENT_LEVEL_KEY, PersistentDataType.INTEGER, 0) + 1;
+
+            if (isWeapon && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER) && enhancementLevel <= 15) {
                 startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
-            } else if (isArmor(itemToEnhance) && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER)) {
+            } else if (isArmor && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER) && enhancementLevel <= 15) {
+                startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
+            } else if (isWeapon && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER) && enhancementLevel >= 16) {
+                startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
+            } else if (isArmor && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER) && enhancementLevel >= 16) {
                 startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
             } else {
-                showErrorInGUI(clickedInventory);
+                showErrorInGUI(clickedInventory, enhancementLevel);
             }
-        }
-    }
-
-
-    // Add this new method inside the EnhanceGUIListener class
-    private void updateEnhanceButton(Inventory inventory) {
-        ItemStack itemToEnhance = inventory.getItem(10);
-        if (itemToEnhance != null && itemToEnhance.getType() != Material.AIR) {
-            ItemMeta itemMeta = itemToEnhance.getItemMeta();
-            NamespacedKey enhancementLevelKey = new NamespacedKey(plugin, "enhancement_level");
-            int currentLevel = itemMeta.getPersistentDataContainer().getOrDefault(enhancementLevelKey, PersistentDataType.INTEGER, 0);
-            int nextLevel = currentLevel + 1;
-            double successChance = getSuccessChance(nextLevel);
-            inventory.setItem(16, EnhanceGUI.createEnhanceButton(successChance));
-        } else {
-            inventory.setItem(16, EnhanceGUI.createEnhanceButton(0));
         }
     }
 
@@ -148,23 +150,25 @@ public class EnhanceGUIListener implements Listener {
         return item;
     }
     
-    
-
-
-    private void showErrorInGUI(Inventory inventory) {
+    private void showErrorInGUI(Inventory inventory, int enhancementLevel) {
         ItemStack errorBlock = new ItemStack(Material.RED_WOOL);
         ItemMeta meta = errorBlock.getItemMeta();
         if (meta != null) {
-            meta.displayName(Component.text(ChatColor.RED + "You must use the correct Black Stone for the item you want to enhance."));
+            String errorMessage;
+            if (enhancementLevel <= 15) {
+                errorMessage = ChatColor.RED + "You must use the correct Black Stone for the item you want to enhance.";
+            } else {
+                errorMessage = ChatColor.RED + "You must use a Concentrated Magical Black Stone for enhancement levels 16-20.";
+            }
+            meta.displayName(Component.text(errorMessage));
             errorBlock.setItemMeta(meta);
         }
         inventory.setItem(16, errorBlock);
     
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            inventory.setItem(16, EnhanceGUI.createEnhanceButton(0));
+            enhanceGUI.updateEnhanceButton(inventory);
         }, 3 * 20L);
     }
-    
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
@@ -202,60 +206,34 @@ public class EnhanceGUIListener implements Listener {
 
         NamespacedKey enhancementLevelKey = new NamespacedKey(plugin, "enhancement_level");
         int currentLevel = itemMeta.getPersistentDataContainer().getOrDefault(enhancementLevelKey, PersistentDataType.INTEGER, 0);
-        double successChance = getSuccessChance(currentLevel);
+        double successChance = Utils.getSuccessChance(plugin, currentLevel);
 
         Random random = new Random();
         boolean success = random.nextDouble() * 100 < successChance;
     
+        int nextLevel = currentLevel + 1;
+        EnhancementInfo enhanceName = Utils.getEnhancementInfo(nextLevel);
         if (success) {
-            int nextLevel = currentLevel + 1;
-            String enhanceName;
-            ChatColor enhanceColor;
-            switch (nextLevel) {
-                case 16:
-                    enhanceName = "PRI";
-                    enhanceColor = ChatColor.GREEN;
-                    break;
-                case 17:
-                    enhanceName = "DUO";
-                    enhanceColor = ChatColor.AQUA;
-                    break;
-                case 18:
-                    enhanceName = "TRI";
-                    enhanceColor = ChatColor.GOLD;
-                    break;
-                case 19:
-                    enhanceName = "TET";
-                    enhanceColor = ChatColor.YELLOW;
-                    break;
-                case 20:
-                    enhanceName = "PEN";
-                    enhanceColor = ChatColor.RED;
-                    break;
-                default:
-                    enhanceName = String.valueOf(nextLevel);
-                    enhanceColor = ChatColor.GREEN;
-                    break;
-            }
             itemMeta.getPersistentDataContainer().set(enhancementLevelKey, PersistentDataType.INTEGER, nextLevel);
             if (nextLevel > 15) {
-                itemMeta.displayName(Component.text(enhanceColor + "" + ChatColor.BOLD + "" + enhanceName));
+                itemMeta.displayName(Component.text(enhanceName.getEnhanceColor() + "" + ChatColor.BOLD + "" + enhanceName.getEnhanceName()));
+                Bukkit.broadcastMessage(prefix + ChatColor.RED + player.getName() +  ChatColor.GREEN + " Succesfully Enhanced " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from +" + currentLevel + ChatColor.GREEN + " to " + enhanceName.getEnhanceColor() + ChatColor.BOLD + enhanceName.getEnhanceName());
             } else {
-                itemMeta.displayName(Component.text(enhanceColor + "+" + enhanceName));
+                itemMeta.displayName(Component.text(enhanceName.getEnhanceColor() + "+" + enhanceName.getEnhanceName()));
+                Bukkit.broadcastMessage(prefix + ChatColor.AQUA + player.getName() +  ChatColor.GREEN + " Succesfully Enhanced " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from +" + currentLevel + ChatColor.GREEN + " to +" + nextLevel); 
             }
             itemToEnhance.setItemMeta(itemMeta); // Set the new meta before applying enchantments
             applyEnchantments(itemToEnhance, nextLevel);
             if (nextLevel == 20) {
                 inventory.setItem(16, EnhanceGUI.createMaxEnhancementAchievedButton());
             } else {
-                Bukkit.broadcastMessage(ChatColor.GREEN + "Enhancement Success: " + enhanceColor + "" + ChatColor.BOLD + itemToEnhance.getType().name() + " " + enhanceName);
-                updateEnhanceButton(inventory);
+                enhanceGUI.updateEnhanceButton(inventory);
             }
-            showSuccessBlock(player, inventory);
+            enhanceGUI.showSuccessBlock(player, inventory);
             spawnSuccessParticles(player);
         } else {
-            Bukkit.broadcastMessage(ChatColor.RED + "Enhancement Failed: " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " +" + currentLevel);
-            showFailureBlock(player, inventory);
+            Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from +" + currentLevel + ChatColor.GREEN + " to +" + enhanceName.getEnhanceName());
+            enhanceGUI.showFailureBlock(player, inventory);
         }
     
         if (blackStone.getAmount() > 1) {
@@ -265,39 +243,7 @@ public class EnhanceGUIListener implements Listener {
         }
     }
     
-    private void showSuccessBlock(Player player, Inventory inventory) {
-        ItemStack successBlock = new ItemStack(Material.LIME_WOOL);
-        ItemMeta meta = successBlock.getItemMeta();
-        if (meta != null) {
-            meta.displayName(Component.text(ChatColor.GREEN + "Enhancement Success!"));
-            successBlock.setItemMeta(meta);
-        }
-        inventory.setItem(16, successBlock);
-    
-        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-    
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            updateEnhanceButton(inventory);
-        }, 3 * 20L);
-    }
-    
-    private void showFailureBlock(Player player, Inventory inventory) {
-        ItemStack failureBlock = new ItemStack(Material.RED_WOOL);
-        ItemMeta meta = failureBlock.getItemMeta();
-        if (meta != null) {
-            meta.displayName(Component.text(ChatColor.RED + "Enhancement Failed"));
-            failureBlock.setItemMeta(meta);
-        }
-        inventory.setItem(16, failureBlock);
-    
-        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-    
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            updateEnhanceButton(inventory);
-        }, 3 * 20L);
-    }
-    
-    private void applyEnchantments(ItemStack item, int enhancementLevel) {
+    public void applyEnchantments(ItemStack item, int enhancementLevel) {
         ConfigurationSection config = plugin.getConfig().getConfigurationSection(String.valueOf(enhancementLevel));
         if (config == null) {
             return;
@@ -325,23 +271,6 @@ public class EnhanceGUIListener implements Listener {
         }
     }
     
-    
-
-    
-    private double getSuccessChance(int currentLevel) {
-        ConfigurationSection config = plugin.getConfig().getConfigurationSection(String.valueOf(currentLevel));
-        if (config == null) {
-            return 0;
-        }
-    
-        double successChance = config.getDouble("success_chance");
-        if (successChance <= 0) {
-            return 0;
-        }
-    
-        return successChance;
-    }
-    
     private ChatColor convertTextColorToChatColor(TextColor textColor) {
         for (ChatColor chatColor : ChatColor.values()) {
             if (textColor.asHexString().equalsIgnoreCase(chatColor.toString())) {
@@ -352,7 +281,7 @@ public class EnhanceGUIListener implements Listener {
     }
     
 
-    private boolean isWeapon(ItemStack item) {
+    public boolean isWeapon(ItemStack item) {
         Material type = item.getType();
         return type.name().endsWith("_SWORD") || type.name().endsWith("_AXE") || type.name().endsWith("_BOW") || type.name().endsWith("_CROSSBOW");
     }
@@ -370,7 +299,7 @@ public class EnhanceGUIListener implements Listener {
         }
     }    
     
-    private boolean isArmor(ItemStack item) {
+    public boolean isArmor(ItemStack item) {
         Material type = item.getType();
         return type.name().endsWith("_HELMET") || type.name().endsWith("_CHESTPLATE") || type.name().endsWith("_LEGGINGS") || type.name().endsWith("_BOOTS");
     }

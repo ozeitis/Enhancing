@@ -75,11 +75,11 @@ public class BlackStones {
     }
 
     public class BlackStoneKeys {
-        public static final NamespacedKey BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "black_stone_weapon");
-        public static final NamespacedKey BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "black_stone_armor");
+        public static final NamespacedKey BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "black_stone_weapon");
+        public static final NamespacedKey BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "black_stone_armor");
         
-        public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "concentrated_magical_black_stone_weapon");
-        public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancer.getPlugin(Enhancer.class), "concentrated_magical_black_stone_armor");
+        public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_weapon");
+        public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_armor");
     }
 
 }

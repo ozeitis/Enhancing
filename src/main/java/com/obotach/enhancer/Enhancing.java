@@ -15,11 +15,18 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.obotach.enhancer.Commands.EnhanceCommandExecutor;
+import com.obotach.enhancer.Commands.EnhanceItemCommand;
+import com.obotach.enhancer.Commands.GiveBlackStoneCommand;
+import com.obotach.enhancer.Listeners.DisableEnchantingListener;
+import com.obotach.enhancer.Listeners.EnhanceGUIListener;
+import com.obotach.enhancer.Listeners.MobDeathListener;
+
 import net.md_5.bungee.api.ChatColor;
 
-public class Enhancer extends JavaPlugin implements Listener {
+public class Enhancing extends JavaPlugin implements Listener {
 
-    private static Enhancer instance;
+    private static Enhancing instance;
 
     @Override
     public void onEnable() {
@@ -36,6 +43,10 @@ public class Enhancer extends JavaPlugin implements Listener {
 
                 // Write example data to config file
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+                // add black-stone-drop-chance to config
+                config.set("plugin-prefix", ChatColor.GOLD + "[Enhancing] " + ChatColor.RESET);
+                config.set("black-stone-drop-chance", 1);
+                config.set("concentrated-black-stone-drop-chance", 0.5);
                 for (int i = 0; i <= 19; i++) {
                     String path = i + ".weapon";
                     List<String> enchants = Arrays.asList("sharpness:1", "unbreaking:1");
@@ -55,20 +66,28 @@ public class Enhancer extends JavaPlugin implements Listener {
 
 
         Bukkit.getPluginManager().registerEvents(this, this);
-
-        getServer().getPluginManager().registerEvents(new MobDeathListener(), this);
-        getServer().getPluginManager().registerEvents(new EnhanceGUIListener(this), this);
+        double blackStoneDropChance = getConfig().getDouble("black-stone-drop-chance");
+        double concentratedBlackStoneDropChance = getConfig().getDouble("concentrated-black-stone-drop-chance");
+        getServer().getPluginManager().registerEvents(new MobDeathListener(blackStoneDropChance, concentratedBlackStoneDropChance), this);
+        EnhanceGUI enhanceGUI = new EnhanceGUI(this);
+        getServer().getPluginManager().registerEvents(new EnhanceGUIListener(this, enhanceGUI), this);
         getServer().getPluginManager().registerEvents(new DisableEnchantingListener(), this);
 
         getCommand("enhance").setExecutor(new EnhanceCommandExecutor());
         getCommand("giveblackstone").setExecutor(new GiveBlackStoneCommand(this));
+        EnhanceGUIListener enhanceGUIListener = new EnhanceGUIListener(this, enhanceGUI);
+        getCommand("enhanceitem").setExecutor(new EnhanceItemCommand(this, enhanceGUIListener));
         getCommand("reloadconfig").setExecutor(new ReloadCommandExecutor(this));
 
-        //anounce plugin is enabled
-        getLogger().info("Enhancer has been enabled!");
+        //anounce plugin is enabled and say what version it is and what drop chance is
+        String version = getDescription().getVersion();
+        getLogger().info("Enhancing plugin enabled (version " + version + ")");
+        getLogger().info("Black stone drop chance: " + blackStoneDropChance);
+        getLogger().info("Concentrated black stone drop chance: " + concentratedBlackStoneDropChance);
+
     }
 
-    public static Enhancer getInstance() {
+    public static Enhancing getInstance() {
         return instance;
     }
 
@@ -78,9 +97,9 @@ public class Enhancer extends JavaPlugin implements Listener {
 
     public class ReloadCommandExecutor implements CommandExecutor {
 
-        private final Enhancer plugin;
+        private final Enhancing plugin;
     
-        public ReloadCommandExecutor(Enhancer plugin) {
+        public ReloadCommandExecutor(Enhancing plugin) {
             this.plugin = plugin;
         }
     

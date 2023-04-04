@@ -1,4 +1,4 @@
-package com.obotach.enhancer;
+package com.obotach.enhancer.Listeners;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

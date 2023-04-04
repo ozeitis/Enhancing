@@ -1,6 +1,6 @@
-name: Enhancer
+name: Enhancing
 version: 0.1.0
-main: com.obotach.enhancer.Enhancer
+main: com.obotach.enhancer.Enhancing
 description: Yes, it's a plugin that enhances items!
 author: Oze Botach
 website: https://successvariable.com
@@ -11,7 +11,10 @@ commands:
     usage: /enhance
   giveblackstone:
     description: Gives the player a specified amount of Black Stones
-    usage: /giveblackstone <weapon|armor|cweapon|carmor> <amount>
+    usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>
+  enhanceitem:
+    description: Enhance an item to the specified level
+    usage: /<command> <level>
   reloadconfig:
     description: Reloads the plugin's config.yml
     usage: /reloadconfig
