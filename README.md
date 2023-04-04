@@ -20,8 +20,10 @@ This plugin was inspired by the [Black Desert Online](https://playblackdesert.co
 ## How it works
 
 1. **Obtaining Black Stones**: Players must first obtain Black Stones by killing mobs. Different mobs have different chances of dropping Black Stones. Base armor and weapon Black Stones are used to enhance gear from levels 1-15. Concentrated Black Stones are used to enhance gear to the harder levels PRI-PEN (16-20).
+![](https://media3.giphy.com/media/cHQ6xnIVkwn1MZW8Y0/giphy.gif)
 
 2. **Enhancement GUI**: Players can access the enhancement GUI to start the enhancement process. They need to place the item they want to enhance and the corresponding Black Stone in the GUI.
+![](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzViZTA3YWE1ZGQwMzE5ODIwNGUxMGNkOGQ1Y2MwOGZlZTk3YWUyYiZjdD1n/iN0fL58II7UMXdjIQU/giphy.gif)
 
 3. **Enhancement levels**: Each enhancement level has a specific success chance, which is configurable, making higher levels more challenging to achieve. After level 15, players need to use Concentrated Black Stones to advance to the next levels. Failing an enhancement attempt after level 15 will result in losing an enchantment level; for example, if you fail a DUO (level 17) enhancement attempt, you will be reverted back to PRI (level 16) enhancement level. The enhancement level is displayed on the item with a unique name and color.
 
@@ -32,6 +34,7 @@ This plugin was inspired by the [Black Desert Online](https://playblackdesert.co
 6. **Cool particle effects**: When players successfully enhance an item, cool particle effects will appear around them, adding a visual element of excitement and satisfaction.
 
 7. **Blocks Enchnating Table**: Players are now not allowed to use the enchanting table for items that can be enhanced, forcing users to use Enhancing progression fpr enchants.
+![](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzY1ODA3ZmUwYmY4YzNjMWU2ZTEwZjJiNjNjOTZiYWM4ZDFmMGM5MyZjdD1n/YtzVjFIeKwEhA2vBen/giphy.gif)
 
 ## Why Blackstone Enhancer?
 
