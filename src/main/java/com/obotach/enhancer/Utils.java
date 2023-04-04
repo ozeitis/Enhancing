@@ -1,11 +1,19 @@
 package com.obotach.enhancer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class Utils {
+
+    public static void betterBroadcast(String message) {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            player.sendMessage(message);
+        }
+    }
     
     public static boolean isWeapon(ItemStack item) {
         Material type = item.getType();

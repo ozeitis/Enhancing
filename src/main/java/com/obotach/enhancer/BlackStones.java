@@ -81,5 +81,4 @@ public class BlackStones {
         public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_weapon");
         public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_armor");
     }
-
 }
