@@ -43,6 +43,7 @@ Blackstone Enhancer is designed to make the enhancement process more engaging, c
 - Make all Language Configurable
 - Add Fail Stacking System **(Large Feature)**
 - Clean up Code
+- Create Documentation
 
 ## Reporting Bugs
 If you encounter any bugs while using the Enhancing plugin, please open an issue on GitHub. This will help the developers address the issue and improve the plugin for everyone.
