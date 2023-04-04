@@ -1,7 +1,7 @@
 package com.obotach.enhancer.Listeners;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -104,9 +104,9 @@ public class EnhanceGUIListener implements Listener {
                 startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
             } else if (isArmor && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER) && enhancementLevel <= 15) {
                 startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
-            } else if (isWeapon && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER) && enhancementLevel >= 16) {
+            } else if (isWeapon && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER) && enhancementLevel >= 16 && enhancementLevel <= 20) {
                 startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
-            } else if (isArmor && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER) && enhancementLevel >= 16) {
+            } else if (isArmor && blackStoneMeta.getPersistentDataContainer().has(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER) && enhancementLevel >= 16 && enhancementLevel <= 20) {
                 startEnhancementAnimation((Player) event.getWhoClicked(), event.getClickedInventory(), 10, 13);
             } else {
                 showErrorInGUI(clickedInventory, enhancementLevel);
@@ -210,17 +210,17 @@ public class EnhanceGUIListener implements Listener {
 
         Random random = new Random();
         boolean success = random.nextDouble() * 100 < successChance;
-    
+
         int nextLevel = currentLevel + 1;
         EnhancementInfo enhanceName = Utils.getEnhancementInfo(nextLevel);
         if (success) {
             itemMeta.getPersistentDataContainer().set(enhancementLevelKey, PersistentDataType.INTEGER, nextLevel);
             if (nextLevel > 15) {
-                itemMeta.displayName(Component.text(enhanceName.getEnhanceColor() + "" + ChatColor.BOLD + "" + enhanceName.getEnhanceName()));
-                Bukkit.broadcastMessage(prefix + ChatColor.RED + player.getName() +  ChatColor.GREEN + " Succesfully Enhanced " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from +" + currentLevel + ChatColor.GREEN + " to " + enhanceName.getEnhanceColor() + ChatColor.BOLD + enhanceName.getEnhanceName());
+                itemMeta.displayName(getEnhancementName(nextLevel));
+                Utils.betterBroadcast(prefix + ChatColor.RED + player.getName() +  ChatColor.GREEN + " Succesfully Enhanced " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(currentLevel)) + " to " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(nextLevel)));
             } else {
                 itemMeta.displayName(Component.text(enhanceName.getEnhanceColor() + "+" + enhanceName.getEnhanceName()));
-                Bukkit.broadcastMessage(prefix + ChatColor.AQUA + player.getName() +  ChatColor.GREEN + " Succesfully Enhanced " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from +" + currentLevel + ChatColor.GREEN + " to +" + nextLevel); 
+                Utils.betterBroadcast(prefix + ChatColor.AQUA + player.getName() +  ChatColor.GREEN + " Succesfully Enhanced " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(currentLevel)) + ChatColor.GREEN + " to " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(nextLevel)));
             }
             itemToEnhance.setItemMeta(itemMeta); // Set the new meta before applying enchantments
             applyEnchantments(itemToEnhance, nextLevel);
@@ -232,7 +232,19 @@ public class EnhanceGUIListener implements Listener {
             enhanceGUI.showSuccessBlock(player, inventory);
             spawnSuccessParticles(player);
         } else {
-            Bukkit.broadcastMessage(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from +" + currentLevel + ChatColor.GREEN + " to +" + enhanceName.getEnhanceName());
+            if (currentLevel >= 16 && currentLevel <= 20) {
+                // Downgrade the item by one level
+                currentLevel--;
+                itemMeta.getPersistentDataContainer().set(enhancementLevelKey, PersistentDataType.INTEGER, currentLevel);
+                itemMeta.displayName(getEnhancementName(currentLevel));
+                itemToEnhance.setItemMeta(itemMeta);
+    
+                // Announce the downgrade to users
+                Utils.betterBroadcast(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(currentLevel+1)) + ChatColor.RED + " to " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(nextLevel)) + ChatColor.GRAY + " and downgraded to " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(currentLevel)));
+            } else {
+                Utils.betterBroadcast(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(currentLevel)) + " to " + LegacyComponentSerializer.legacySection().serialize(getEnhancementName(nextLevel)));
+            }
+    
             enhanceGUI.showFailureBlock(player, inventory);
         }
     
@@ -270,16 +282,6 @@ public class EnhanceGUIListener implements Listener {
             }
         }
     }
-    
-    private ChatColor convertTextColorToChatColor(TextColor textColor) {
-        for (ChatColor chatColor : ChatColor.values()) {
-            if (textColor.asHexString().equalsIgnoreCase(chatColor.toString())) {
-                return chatColor;
-            }
-        }
-        return ChatColor.WHITE; // Return a default ChatColor if no match is found
-    }
-    
 
     public boolean isWeapon(ItemStack item) {
         Material type = item.getType();
@@ -302,5 +304,13 @@ public class EnhanceGUIListener implements Listener {
     public boolean isArmor(ItemStack item) {
         Material type = item.getType();
         return type.name().endsWith("_HELMET") || type.name().endsWith("_CHESTPLATE") || type.name().endsWith("_LEGGINGS") || type.name().endsWith("_BOOTS");
+    }
+
+    private Component getEnhancementName(int enhancementLevel) {
+        if (enhancementLevel > 15) {
+            return Component.text(Utils.getEnhancementInfo(enhancementLevel).getEnhanceColor() + "" + ChatColor.BOLD + "" + Utils.getEnhancementInfo(enhancementLevel).getEnhanceName());
+        } else {
+            return Component.text(Utils.getEnhancementInfo(enhancementLevel).getEnhanceColor() + "+" + Utils.getEnhancementInfo(enhancementLevel).getEnhanceName());
+        }
     }
 }
