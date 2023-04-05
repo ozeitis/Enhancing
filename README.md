@@ -6,6 +6,8 @@ This plugin was inspired by the [Black Desert Online](https://playblackdesert.co
 
 **Please keep in mind this is my first ever Spigot plugin :)**
 
+# [JOIN THE DISCORD :D To Suggest, Report Bugs, and to Chat!](https://discord.gg/UtS9nR4WHE)
+
 ## Features
 
 - Obtain Black Stones by killing mobs
