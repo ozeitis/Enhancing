@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.obotach.enhancer.BlackStones;
+import com.obotach.enhancer.CustomItems;
 import com.obotach.enhancer.Enhancing;
 
 import java.util.Random;
@@ -28,11 +28,11 @@ public class MobDeathListener implements Listener {
         LivingEntity entity = event.getEntity();
 
         if (isHostileMob(entity) && shouldDropBlackStone()) {
-            ItemStack blackStone = random.nextBoolean() ? BlackStones.createBlackStoneWeapon() : BlackStones.createBlackStoneArmor();
+            ItemStack blackStone = random.nextBoolean() ? CustomItems.createBlackStoneWeapon() : CustomItems.createBlackStoneArmor();
             entity.getWorld().dropItemNaturally(entity.getLocation(), blackStone);
         }
         if (isHostileMob(entity) && shouldDropConcentratedBlackStone()) {
-            ItemStack blackStone = random.nextBoolean() ? BlackStones.createConcentratedMagicalBlackStoneWeapon() : BlackStones.createConcentratedMagicalBlackStoneArmor();
+            ItemStack blackStone = random.nextBoolean() ? CustomItems.createConcentratedMagicalBlackStoneWeapon() : CustomItems.createConcentratedMagicalBlackStoneArmor();
             entity.getWorld().dropItemNaturally(entity.getLocation(), blackStone);
         }
     }

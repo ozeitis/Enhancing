@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.obotach.enhancer.BlackStones;
+import com.obotach.enhancer.CustomItems;
 import com.obotach.enhancer.Enhancing;
 
 public class GiveBlackStoneCommand implements CommandExecutor {
@@ -57,13 +57,13 @@ public class GiveBlackStoneCommand implements CommandExecutor {
             ItemStack blackStone = null;
 
             if (itemType.equals("weapon")) {
-                blackStone = BlackStones.createBlackStoneWeapon();
+                blackStone = CustomItems.createBlackStoneWeapon();
             } else if (itemType.equals("armor")) {
-                blackStone = BlackStones.createBlackStoneArmor();
+                blackStone = CustomItems.createBlackStoneArmor();
             } else if (itemType.equals("cweapon")) {
-                blackStone = BlackStones.createConcentratedMagicalBlackStoneWeapon();
+                blackStone = CustomItems.createConcentratedMagicalBlackStoneWeapon();
             } else if (itemType.equals("carmor")) {
-                blackStone = BlackStones.createConcentratedMagicalBlackStoneArmor();
+                blackStone = CustomItems.createConcentratedMagicalBlackStoneArmor();
             } else {
                 sender.sendMessage("Usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>");
                 return true;

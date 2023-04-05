@@ -28,7 +28,7 @@ public class EnhanceGUI {
 
     public static Inventory createEnhanceInventory() {
         Component titleComponent = Component.text(INVENTORY_TITLE);
-        Inventory enhanceInventory = Bukkit.createInventory(null, 27, titleComponent);
+        Inventory enhanceInventory = Bukkit.createInventory(null, 45, titleComponent); // Increase the inventory size to 36
     
         ItemStack placeholder = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         ItemMeta placeholderMeta = placeholder.getItemMeta();
@@ -37,11 +37,13 @@ public class EnhanceGUI {
             placeholder.setItemMeta(placeholderMeta);
         }
     
-        for (int i = 0; i < 27; i++) {
-            if (i != 10 && i != 13 && i != 16) {
+        for (int i = 0; i < 45; i++) {
+            if (i != 19 && i != 22 && i != 25 && i != 16 && i != 34) { // Add protection rune slot at index 34
                 enhanceInventory.setItem(i, placeholder);
             }
         }
+        // set block at index 16 to be the show percent success block
+        enhanceInventory.setItem(16, createSuccessChancePanel(0));
     
         ItemStack enhanceButton = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         ItemMeta enhanceButtonMeta = enhanceButton.getItemMeta();
@@ -50,37 +52,38 @@ public class EnhanceGUI {
             enhanceButton.setItemMeta(enhanceButtonMeta);
         }
     
-        enhanceInventory.setItem(16, createEnhanceButton(0));
+        enhanceInventory.setItem(25, createEnhanceButton());
     
         return enhanceInventory;
     }
+    
     
     
 
     public static void openEnhanceGUI(Player player) {
         player.openInventory(createEnhanceInventory());
     }
-
-    private  ItemStack createPlaceholderItem(String description) {
-        ItemStack placeholder = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta meta = placeholder.getItemMeta();
+    
+    public static ItemStack createEnhanceButton() {
+        ItemStack enhanceButton = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+        ItemMeta meta = enhanceButton.getItemMeta();
     
         if (meta != null) {
-            meta.setDisplayName(ChatColor.GRAY + description);
-            placeholder.setItemMeta(meta);
+            meta.setDisplayName(ChatColor.GOLD + "Enhance");
+            enhanceButton.setItemMeta(meta);
         }
     
-        return placeholder;
+        return enhanceButton;
     }
-    
-    public static ItemStack createEnhanceButton(double successChance) {
+
+    public static ItemStack createSuccessChancePanel(double successChance) {
         ItemStack enhanceButton = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
         ItemMeta meta = enhanceButton.getItemMeta();
     
         if (meta != null) {
-            meta.setDisplayName(ChatColor.GREEN + "Enhance");
+            meta.setDisplayName(ChatColor.GREEN + "Success Chance");
             List<Component> lore = new ArrayList<>();
-            lore.add(Component.text(ChatColor.GRAY + "Success Chance: " + ChatColor.AQUA + String.format("%.1f", successChance) + "%"));
+            lore.add(Component.text(ChatColor.AQUA + "" + ChatColor.AQUA + String.format("%.2f", successChance) + "%"));
             meta.lore(lore);
             enhanceButton.setItemMeta(meta);
         }
@@ -95,12 +98,14 @@ public class EnhanceGUI {
             meta.displayName(Component.text(ChatColor.GREEN + "Enhancement Success!"));
             successBlock.setItemMeta(meta);
         }
-        inventory.setItem(16, successBlock);
-    
+        inventory.setItem(25, successBlock);
+        // update the success chance panel
+        updateSuccessChancePanel(inventory);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+        
     
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            updateEnhanceButton(inventory);
+            updateSuccessChancePanel(inventory);
         }, 3 * 20L);
     }
     
@@ -111,27 +116,32 @@ public class EnhanceGUI {
             meta.displayName(Component.text(ChatColor.RED + "Enhancement Failed"));
             failureBlock.setItemMeta(meta);
         }
-        inventory.setItem(16, failureBlock);
+        inventory.setItem(25, failureBlock);
     
         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
     
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            updateEnhanceButton(inventory);
+            updateSuccessChancePanel(inventory);
         }, 3 * 20L);
     }
 
     // Add this new method inside the EnhanceGUIListener class
-    public void updateEnhanceButton(Inventory inventory) {
-        ItemStack itemToEnhance = inventory.getItem(10);
+    public void updateSuccessChancePanel(Inventory inventory) {
+        ItemStack itemToEnhance = inventory.getItem(19);
         if (itemToEnhance != null && itemToEnhance.getType() != Material.AIR) {
             ItemMeta itemMeta = itemToEnhance.getItemMeta();
             NamespacedKey enhancementLevelKey = new NamespacedKey(plugin, "enhancement_level");
             int currentLevel = itemMeta.getPersistentDataContainer().getOrDefault(enhancementLevelKey, PersistentDataType.INTEGER, 0);
             int nextLevel = currentLevel + 1;
             double successChance = Utils.getSuccessChance(plugin, nextLevel);
-            inventory.setItem(16, EnhanceGUI.createEnhanceButton(successChance));
+            inventory.setItem(16, EnhanceGUI.createSuccessChancePanel(successChance));
+
+            // if item level is 20 or higher, set the enhance button to be the max enhancement achieved button
+            if (currentLevel >= 20) {
+                inventory.setItem(25, EnhanceGUI.createMaxEnhancementAchievedButton());
+            }
         } else {
-            inventory.setItem(16, EnhanceGUI.createEnhanceButton(0));
+            inventory.setItem(16, EnhanceGUI.createSuccessChancePanel(0));
         }
     }
 

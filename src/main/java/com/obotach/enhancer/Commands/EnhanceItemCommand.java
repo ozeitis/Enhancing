@@ -12,17 +12,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import com.obotach.enhancer.Enhancing;
+import com.obotach.enhancer.Utils;
 import com.obotach.enhancer.Listeners.EnhanceGUIListener;
 
 import net.kyori.adventure.text.Component;
 
 public class EnhanceItemCommand implements CommandExecutor {
-    private final EnhanceGUIListener enhanceGUIListener;
     private final Enhancing plugin;
 
-    public EnhanceItemCommand(Enhancing plugin, EnhanceGUIListener enhanceGUIListener) {
+    public EnhanceItemCommand(Enhancing plugin) {
         this.plugin = plugin;
-        this.enhanceGUIListener = enhanceGUIListener;
     }
 
     @Override
@@ -63,7 +62,7 @@ public class EnhanceItemCommand implements CommandExecutor {
             return true;
         }
 
-        if (!enhanceGUIListener.isWeapon(item) && !enhanceGUIListener.isArmor(item)) {
+        if (!Utils.isWeapon(item) && !Utils.isArmor(item)) {
             sender.sendMessage("You can only enhance weapons and armor.");
             return true;
         }
@@ -108,7 +107,7 @@ public class EnhanceItemCommand implements CommandExecutor {
             itemMeta.displayName(Component.text(enhanceColor + "+" + enhanceName));
         }
         item.setItemMeta(itemMeta); // Set the new meta before applying enchantment
-        enhanceGUIListener.applyEnchantments(item, level);
+        Utils.applyEnchantments(plugin, item, level);
         sender.sendMessage("Item enhanced to level " + level + ".");
         return true;
     }

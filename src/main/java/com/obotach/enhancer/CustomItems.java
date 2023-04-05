@@ -9,7 +9,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.NamespacedKey;
 
-public class BlackStones {
+public class CustomItems {
     public static ItemStack createBlackStoneWeapon() {
         ItemStack blackStoneWeapon = new ItemStack(Material.COAL, 1);
         ItemMeta meta = blackStoneWeapon.getItemMeta();
@@ -19,7 +19,7 @@ public class BlackStones {
             meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             PersistentDataContainer data = meta.getPersistentDataContainer();
-            data.set(BlackStoneKeys.BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER, 1);
+            data.set(CustomItemKeys.BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER, 1);
             blackStoneWeapon.setItemMeta(meta);
         }
 
@@ -35,7 +35,7 @@ public class BlackStones {
             meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             PersistentDataContainer data = meta.getPersistentDataContainer();
-            data.set(BlackStoneKeys.BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER, 1);
+            data.set(CustomItemKeys.BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER, 1);
             blackStoneArmor.setItemMeta(meta);
         }
 
@@ -51,7 +51,7 @@ public class BlackStones {
             meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             PersistentDataContainer data = meta.getPersistentDataContainer();
-            data.set(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER, 1);
+            data.set(CustomItemKeys.CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY, PersistentDataType.INTEGER, 1);
             concentratedMagicalBlackStoneWeapon.setItemMeta(meta);
         }
 
@@ -67,18 +67,37 @@ public class BlackStones {
             meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             PersistentDataContainer data = meta.getPersistentDataContainer();
-            data.set(BlackStoneKeys.CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER, 1);
+            data.set(CustomItemKeys.CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY, PersistentDataType.INTEGER, 1);
             concentratedMagicalBlackStoneArmor.setItemMeta(meta);
         }
 
         return concentratedMagicalBlackStoneArmor;
     }
 
-    public class BlackStoneKeys {
+    public static ItemStack createProtectionRune() {
+        ItemStack protectionRune = new ItemStack(Material.NETHER_STAR, 1);
+        ItemMeta meta = protectionRune.getItemMeta();
+    
+        if (meta != null) {
+            meta.displayName(Component.text("§eProtection Rune"));
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            data.set(new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "protection_rune"), PersistentDataType.INTEGER, 1);
+            protectionRune.setItemMeta(meta);
+        }
+    
+        return protectionRune;
+    }
+    
+
+    public class CustomItemKeys {
         public static final NamespacedKey BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "black_stone_weapon");
         public static final NamespacedKey BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "black_stone_armor");
         
         public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_WEAPON_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_weapon");
         public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_armor");
+
+        public static final NamespacedKey PROTECTION_RUNE_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "protection_rune");
     }
 }

@@ -75,8 +75,7 @@ public class Enhancing extends JavaPlugin implements Listener {
 
         getCommand("enhance").setExecutor(new EnhanceCommandExecutor());
         getCommand("giveblackstone").setExecutor(new GiveBlackStoneCommand(this));
-        EnhanceGUIListener enhanceGUIListener = new EnhanceGUIListener(this, enhanceGUI);
-        getCommand("enhanceitem").setExecutor(new EnhanceItemCommand(this, enhanceGUIListener));
+        getCommand("enhanceitem").setExecutor(new EnhanceItemCommand(this));
         getCommand("reloadconfig").setExecutor(new ReloadCommandExecutor(this));
 
         //anounce plugin is enabled and say what version it is and what drop chance is
