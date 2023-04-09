@@ -125,4 +125,31 @@ public class Utils {
     
         return new EnhancementInfo(enhanceName, enhanceColor);
     }
+
+    public static boolean isBlackStone(ItemStack item) {
+        if (item == null || item.getType() != Material.BLACKSTONE) {
+            return false;
+        }
+    
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null || !meta.hasDisplayName()) {
+            return false;
+        }
+    
+        return ChatColor.stripColor(meta.getDisplayName()).equals("Black Stone");
+    }
+    
+    public static boolean isProtectionRune(ItemStack item) {
+        if (item == null || item.getType() != Material.PAPER) {
+            return false;
+        }
+    
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null || !meta.hasDisplayName()) {
+            return false;
+        }
+    
+        return ChatColor.stripColor(meta.getDisplayName()).equals("Protection Rune");
+    }
+    
 }

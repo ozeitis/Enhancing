@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.obotach.enhancer.Commands.EnhanceCommandExecutor;
 import com.obotach.enhancer.Commands.EnhanceItemCommand;
-import com.obotach.enhancer.Commands.GiveBlackStoneCommand;
+import com.obotach.enhancer.Commands.GiveItemsCommand;
 import com.obotach.enhancer.Listeners.DisableEnchantingListener;
 import com.obotach.enhancer.Listeners.EnhanceGUIListener;
 import com.obotach.enhancer.Listeners.MobDeathListener;
@@ -74,7 +74,7 @@ public class Enhancing extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new DisableEnchantingListener(), this);
 
         getCommand("enhance").setExecutor(new EnhanceCommandExecutor());
-        getCommand("giveblackstone").setExecutor(new GiveBlackStoneCommand(this));
+        getCommand("giveblackstone").setExecutor(new GiveItemsCommand());
         getCommand("enhanceitem").setExecutor(new EnhanceItemCommand(this));
         getCommand("reloadconfig").setExecutor(new ReloadCommandExecutor(this));
 

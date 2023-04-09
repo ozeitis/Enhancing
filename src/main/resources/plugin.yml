@@ -1,5 +1,5 @@
 name: Enhancing
-version: 1.1.1
+version: 1.2.0
 main: com.obotach.enhancer.Enhancing
 description: Yes, it's a plugin that enhances items!
 author: Oze Botach
@@ -12,7 +12,7 @@ commands:
     permission: enhancing.enhance
   giveblackstone:
     description: Gives the player a specified amount of Black Stones
-    usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>
+    usage: /giveblackstone <player> <weapon|armor|cweapon|carmor|pstone> <amount>
     permission: enhancing.giveblackstone
   enhanceitem:
     description: Enhance an item to the specified level

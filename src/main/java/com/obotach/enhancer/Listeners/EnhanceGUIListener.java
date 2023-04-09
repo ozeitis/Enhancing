@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -116,6 +117,17 @@ public class EnhanceGUIListener implements Listener {
     }
 
     private void startEnhancementAnimation(Player player, Inventory inventory, int itemSlot, int blackStoneSlot) {
+        ItemStack protectionStone = inventory.getItem(34);
+        
+        //check if slot 34 is empty if not check if it is a Protection Rune. If it is not a protection rune show error
+        if (protectionStone != null && protectionStone.getType() != Material.AIR && !protectionStone.getItemMeta().getPersistentDataContainer().has(CustomItemKeys.PROTECTION_RUNE_KEY, PersistentDataType.INTEGER)) {
+            //return itenm to player and remove it from inventory
+            player.getInventory().addItem(protectionStone);
+            inventory.setItem(34, null);
+            showErrorInGUI(inventory, 0);
+            return;
+        }
+        
         Material[] countdownBlocks = {Material.RED_CONCRETE, Material.ORANGE_CONCRETE, Material.YELLOW_CONCRETE, Material.LIME_CONCRETE, Material.GREEN_CONCRETE};
     
         int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
@@ -140,7 +152,7 @@ public class EnhanceGUIListener implements Listener {
         // Store the task ID for the player
         enhancementTasks.put(player.getUniqueId(), taskId);
     }
-    
+
     private void showErrorInGUI(Inventory inventory, int enhancementLevel) {
         ItemStack errorBlock = new ItemStack(Material.RED_WOOL);
         ItemMeta meta = errorBlock.getItemMeta();
@@ -160,6 +172,7 @@ public class EnhanceGUIListener implements Listener {
             inventory.setItem(25, enhanceGUI.createEnhanceButton());
         }, 3 * 20L);
     }
+
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
@@ -198,7 +211,10 @@ public class EnhanceGUIListener implements Listener {
     private void enhanceItem(Player player, Inventory inventory, int itemSlot, int blackStoneSlot) {
         ItemStack itemToEnhance = inventory.getItem(itemSlot);
         ItemStack blackStone = inventory.getItem(blackStoneSlot);
+        ItemStack protectionStone = inventory.getItem(34);
         ItemMeta itemMeta = itemToEnhance.getItemMeta();
+
+        boolean hasProtectionStone = protectionStone != null && protectionStone.getType() != Material.AIR && protectionStone.getItemMeta().getPersistentDataContainer().has(CustomItemKeys.PROTECTION_RUNE_KEY, PersistentDataType.INTEGER);
 
         NamespacedKey enhancementLevelKey = new NamespacedKey(plugin, "enhancement_level");
         int currentLevel = itemMeta.getPersistentDataContainer().getOrDefault(enhancementLevelKey, PersistentDataType.INTEGER, 0);
@@ -224,7 +240,7 @@ public class EnhanceGUIListener implements Listener {
             enhanceGUI.showSuccessBlock(player, inventory);
             spawnSuccessParticles(player);
         } else {
-            if (currentLevel >= 16 && currentLevel <= 20) {
+            if (currentLevel >= 16 && currentLevel <= 20 && !hasProtectionStone) {
                 // Downgrade the item by one level
                 currentLevel--;
                 itemMeta.getPersistentDataContainer().set(enhancementLevelKey, PersistentDataType.INTEGER, currentLevel);
@@ -233,6 +249,9 @@ public class EnhanceGUIListener implements Listener {
     
                 // Announce the downgrade to users
                 Utils.betterBroadcast(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(currentLevel+1)) + ChatColor.RED + " to " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(nextLevel)) + ChatColor.GRAY + " and downgraded to " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(currentLevel)));
+            } else if (currentLevel >= 16 && currentLevel <= 20 && hasProtectionStone) {
+                // Announce the failure to enhance with protection to users
+                Utils.betterBroadcast(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(currentLevel)) + " to " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(nextLevel)) + ChatColor.GRAY + " but item is protected by Protection Stone.");
             } else {
                 Utils.betterBroadcast(prefix + ChatColor.YELLOW + player.getName() + ChatColor.RED + " Failed to Enhance " + ChatColor.AQUA + itemToEnhance.getType().name() + ChatColor.GRAY + " from " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(currentLevel)) + " to " + LegacyComponentSerializer.legacySection().serialize(Utils.getEnhancementName(nextLevel)));
             }
@@ -244,6 +263,14 @@ public class EnhanceGUIListener implements Listener {
             blackStone.setAmount(blackStone.getAmount() - 1);
         } else {
             inventory.setItem(blackStoneSlot, null);
+        }
+
+        if (hasProtectionStone) {
+            if (protectionStone.getAmount() > 1) {
+                protectionStone.setAmount(protectionStone.getAmount() - 1);
+            } else {
+                inventory.setItem(34, null);
+            }
         }
     }
 

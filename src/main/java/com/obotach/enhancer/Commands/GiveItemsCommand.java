@@ -10,13 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import com.obotach.enhancer.CustomItems;
 import com.obotach.enhancer.Enhancing;
 
-public class GiveBlackStoneCommand implements CommandExecutor {
-
-    private final Enhancing plugin;
-
-    public GiveBlackStoneCommand(Enhancing plugin) {
-        this.plugin = plugin;
-    }
+public class GiveItemsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -54,23 +48,25 @@ public class GiveBlackStoneCommand implements CommandExecutor {
                 return true;
             }
 
-            ItemStack blackStone = null;
+            ItemStack itemToGive = null;
 
             if (itemType.equals("weapon")) {
-                blackStone = CustomItems.createBlackStoneWeapon();
+                itemToGive = CustomItems.createBlackStoneWeapon();
             } else if (itemType.equals("armor")) {
-                blackStone = CustomItems.createBlackStoneArmor();
+                itemToGive = CustomItems.createBlackStoneArmor();
             } else if (itemType.equals("cweapon")) {
-                blackStone = CustomItems.createConcentratedMagicalBlackStoneWeapon();
+                itemToGive = CustomItems.createConcentratedMagicalBlackStoneWeapon();
             } else if (itemType.equals("carmor")) {
-                blackStone = CustomItems.createConcentratedMagicalBlackStoneArmor();
+                itemToGive = CustomItems.createConcentratedMagicalBlackStoneArmor();
+            } else if (itemType.equals("pstone")) {
+                itemToGive = CustomItems.createProtectionRune();
             } else {
                 sender.sendMessage("Usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>");
                 return true;
             }
 
-            blackStone.setAmount(amount);
-            targetPlayer.getInventory().addItem(blackStone);
+            itemToGive.setAmount(amount);
+            targetPlayer.getInventory().addItem(itemToGive);
             targetPlayer.sendMessage("You have received " + amount + " Black Stone(s) (" + itemType + ").");
             player.sendMessage("You have given " + amount + " Black Stone(s) (" + itemType + ") to " + targetPlayer.getName() + ".");
         } else {
