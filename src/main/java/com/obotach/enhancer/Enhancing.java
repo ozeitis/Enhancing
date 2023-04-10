@@ -47,6 +47,7 @@ public class Enhancing extends JavaPlugin implements Listener {
                 config.set("plugin-prefix", ChatColor.GOLD + "[Enhancing] " + ChatColor.RESET);
                 config.set("black-stone-drop-chance", 1);
                 config.set("concentrated-black-stone-drop-chance", 0.5);
+                config.set("protection-stone-drop-chance", 0.1);
                 for (int i = 0; i <= 19; i++) {
                     String path = i + ".weapon";
                     List<String> enchants = Arrays.asList("sharpness:1", "unbreaking:1");
@@ -68,7 +69,8 @@ public class Enhancing extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         double blackStoneDropChance = getConfig().getDouble("black-stone-drop-chance");
         double concentratedBlackStoneDropChance = getConfig().getDouble("concentrated-black-stone-drop-chance");
-        getServer().getPluginManager().registerEvents(new MobDeathListener(blackStoneDropChance, concentratedBlackStoneDropChance), this);
+        double protectionStoneDropChance = getConfig().getDouble("protection-stone-drop-chance");
+        getServer().getPluginManager().registerEvents(new MobDeathListener(blackStoneDropChance, concentratedBlackStoneDropChance, protectionStoneDropChance), this);
         EnhanceGUI enhanceGUI = new EnhanceGUI(this);
         getServer().getPluginManager().registerEvents(new EnhanceGUIListener(this, enhanceGUI), this);
         getServer().getPluginManager().registerEvents(new DisableEnchantingListener(), this);

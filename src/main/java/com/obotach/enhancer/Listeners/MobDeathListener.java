@@ -17,10 +17,12 @@ public class MobDeathListener implements Listener {
     private final Random random = new Random();
     private double blackStoneDropChance;
     private double concentratedBlackStoneDropChance;
+    private double protectionStoneDropChance;
 
-    public MobDeathListener(double blackStoneDropChance, double concentratedBlackStoneDropChance) {
+    public MobDeathListener(double blackStoneDropChance, double concentratedBlackStoneDropChance, double protectionStoneDropChance) {
         this.blackStoneDropChance = blackStoneDropChance;
         this.concentratedBlackStoneDropChance = concentratedBlackStoneDropChance;
+        this.protectionStoneDropChance = protectionStoneDropChance;
     }
 
     @EventHandler
@@ -34,6 +36,10 @@ public class MobDeathListener implements Listener {
         if (isHostileMob(entity) && shouldDropConcentratedBlackStone()) {
             ItemStack blackStone = random.nextBoolean() ? CustomItems.createConcentratedMagicalBlackStoneWeapon() : CustomItems.createConcentratedMagicalBlackStoneArmor();
             entity.getWorld().dropItemNaturally(entity.getLocation(), blackStone);
+        }
+        if (isHostileMob(entity) && shouldDropProtectionStone()) {
+            ItemStack protectionStone = random.nextBoolean() ? CustomItems.createProtectionRune() : CustomItems.createProtectionRune();
+            entity.getWorld().dropItemNaturally(entity.getLocation(), protectionStone);
         }
     }
 
@@ -58,5 +64,9 @@ public class MobDeathListener implements Listener {
 
     private boolean shouldDropConcentratedBlackStone() {
         return random.nextInt(100) < concentratedBlackStoneDropChance;
+    }
+
+    private boolean shouldDropProtectionStone() {
+        return random.nextInt(100) < protectionStoneDropChance;
     }
 }

@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -151,5 +152,23 @@ public class Utils {
     
         return ChatColor.stripColor(meta.getDisplayName()).equals("Protection Rune");
     }
+
+    public static int getMaxDurability(ItemStack item) {
+        return item.getType().getMaxDurability();
+    }
     
+    public static int getDurability(ItemStack item) {
+        int maxDurability = item.getType().getMaxDurability();
+        int currentDamage = item.getDurability();
+        return maxDurability - currentDamage;
+    }
+
+    public static void setDurability(ItemStack item, int newDurability) {
+        int maxDurability = item.getType().getMaxDurability();
+        if (newDurability < 0 || newDurability > maxDurability) {
+            throw new IllegalArgumentException("Invalid durability value");
+        }
+        int newDamage = maxDurability - newDurability;
+        item.setDurability((short) newDamage);
+    }
 }
