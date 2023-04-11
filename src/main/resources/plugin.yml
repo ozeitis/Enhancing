@@ -18,6 +18,10 @@ commands:
     description: Enhance an item to the specified level
     usage: /<command> <level>
     permission: enhancing.enhanceitem
+  protectionshop:
+    description: Reloads the plugin's config.yml
+    usage: /protectionshop
+    # permission: enhancing.reloadconfig
   reloadconfig:
     description: Reloads the plugin's config.yml
     usage: /reloadconfig

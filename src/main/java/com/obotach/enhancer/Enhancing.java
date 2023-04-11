@@ -21,6 +21,7 @@ import com.obotach.enhancer.Commands.GiveItemsCommand;
 import com.obotach.enhancer.Listeners.DisableEnchantingListener;
 import com.obotach.enhancer.Listeners.EnhanceGUIListener;
 import com.obotach.enhancer.Listeners.MobDeathListener;
+import com.obotach.enhancer.Shops.ProtectionRuneShop;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -48,6 +49,7 @@ public class Enhancing extends JavaPlugin implements Listener {
                 config.set("black-stone-drop-chance", 1);
                 config.set("concentrated-black-stone-drop-chance", 0.5);
                 config.set("protection-stone-drop-chance", 0.1);
+                config.set("protection-stone-exp-cost", 100);
                 for (int i = 0; i <= 19; i++) {
                     String path = i + ".weapon";
                     List<String> enchants = Arrays.asList("sharpness:1", "unbreaking:1");
@@ -70,15 +72,18 @@ public class Enhancing extends JavaPlugin implements Listener {
         double blackStoneDropChance = getConfig().getDouble("black-stone-drop-chance");
         double concentratedBlackStoneDropChance = getConfig().getDouble("concentrated-black-stone-drop-chance");
         double protectionStoneDropChance = getConfig().getDouble("protection-stone-drop-chance");
+        int protectionStoneEXPCost = getConfig().getInt("protection-stone-exp-cost");
         getServer().getPluginManager().registerEvents(new MobDeathListener(blackStoneDropChance, concentratedBlackStoneDropChance, protectionStoneDropChance), this);
         EnhanceGUI enhanceGUI = new EnhanceGUI(this);
         getServer().getPluginManager().registerEvents(new EnhanceGUIListener(this, enhanceGUI), this);
         getServer().getPluginManager().registerEvents(new DisableEnchantingListener(), this);
+        getServer().getPluginManager().registerEvents(new ProtectionRuneShop(protectionStoneEXPCost), this);
 
         getCommand("enhance").setExecutor(new EnhanceCommandExecutor());
         getCommand("giveblackstone").setExecutor(new GiveItemsCommand());
         getCommand("enhanceitem").setExecutor(new EnhanceItemCommand(this));
         getCommand("reloadconfig").setExecutor(new ReloadCommandExecutor(this));
+        getCommand("protectionshop").setExecutor(new ProtectionRuneShop(protectionStoneEXPCost));
 
         //anounce plugin is enabled and say what version it is and what drop chance is
         String version = getDescription().getVersion();

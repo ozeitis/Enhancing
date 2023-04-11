@@ -1,9 +1,9 @@
 .gradle
-.DS_STORE
 **/build/
 !src/**/build/
 build/
 bin/
+.DS_Store
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -23,3 +23,4 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 HyperWrite Logo
+src/.DS_Store
