@@ -89,6 +89,23 @@ public class CustomItems {
     
         return protectionRune;
     }
+
+    public static ItemStack createMemoryFragment() {
+        ItemStack memoryFragment = new ItemStack(Material.GLOWSTONE_DUST, 1);
+        ItemMeta meta = memoryFragment.getItemMeta();
+    
+        if (meta != null) {
+            meta.displayName(Component.text("§eMemory Fragment"));
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.LURE, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            data.set(new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "memory_fragment"), PersistentDataType.INTEGER, 1);
+            memoryFragment.setItemMeta(meta);
+        }
+    
+        return memoryFragment;
+    }
+    
     
 
     public class CustomItemKeys {
@@ -99,5 +116,7 @@ public class CustomItems {
         public static final NamespacedKey CONCENTRATED_MAGICAL_BLACK_STONE_ARMOR_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "concentrated_magical_black_stone_armor");
 
         public static final NamespacedKey PROTECTION_RUNE_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "protection_rune");
+
+        public static final NamespacedKey MEMORY_FRAGMENT_KEY = new NamespacedKey(Enhancing.getPlugin(Enhancing.class), "memory_fragment");
     }
 }

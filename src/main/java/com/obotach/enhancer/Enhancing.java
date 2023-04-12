@@ -18,6 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.obotach.enhancer.Commands.EnhanceCommandExecutor;
 import com.obotach.enhancer.Commands.EnhanceItemCommand;
 import com.obotach.enhancer.Commands.GiveItemsCommand;
+import com.obotach.enhancer.Commands.RepairCommand;
+import com.obotach.enhancer.Listeners.BlockBreakListener;
 import com.obotach.enhancer.Listeners.DisableEnchantingListener;
 import com.obotach.enhancer.Listeners.EnhanceGUIListener;
 import com.obotach.enhancer.Listeners.MobDeathListener;
@@ -48,6 +50,7 @@ public class Enhancing extends JavaPlugin implements Listener {
                 config.set("plugin-prefix", ChatColor.GOLD + "[Enhancing] " + ChatColor.RESET);
                 config.set("black-stone-drop-chance", 1);
                 config.set("concentrated-black-stone-drop-chance", 0.5);
+                config.set("memory-fragment-drop-chance", 0.5);
                 config.set("protection-stone-drop-chance", 0.1);
                 config.set("protection-stone-exp-cost", 100);
                 for (int i = 0; i <= 19; i++) {
@@ -71,6 +74,7 @@ public class Enhancing extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         double blackStoneDropChance = getConfig().getDouble("black-stone-drop-chance");
         double concentratedBlackStoneDropChance = getConfig().getDouble("concentrated-black-stone-drop-chance");
+        double memoryFragmentDropChance = getConfig().getDouble("memory-fragment-drop-chance");
         double protectionStoneDropChance = getConfig().getDouble("protection-stone-drop-chance");
         int protectionStoneEXPCost = getConfig().getInt("protection-stone-exp-cost");
         getServer().getPluginManager().registerEvents(new MobDeathListener(blackStoneDropChance, concentratedBlackStoneDropChance, protectionStoneDropChance), this);
@@ -78,12 +82,14 @@ public class Enhancing extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new EnhanceGUIListener(this, enhanceGUI), this);
         getServer().getPluginManager().registerEvents(new DisableEnchantingListener(), this);
         getServer().getPluginManager().registerEvents(new ProtectionRuneShop(protectionStoneEXPCost), this);
+        getServer().getPluginManager().registerEvents(new BlockBreakListener(memoryFragmentDropChance), this);
 
         getCommand("enhance").setExecutor(new EnhanceCommandExecutor());
         getCommand("giveblackstone").setExecutor(new GiveItemsCommand());
         getCommand("enhanceitem").setExecutor(new EnhanceItemCommand(this));
         getCommand("reloadconfig").setExecutor(new ReloadCommandExecutor(this));
         getCommand("protectionshop").setExecutor(new ProtectionRuneShop(protectionStoneEXPCost));
+        getCommand("erepair").setExecutor(new RepairCommand(this));
 
         //anounce plugin is enabled and say what version it is and what drop chance is
         String version = getDescription().getVersion();

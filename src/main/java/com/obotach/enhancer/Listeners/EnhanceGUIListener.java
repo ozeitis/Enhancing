@@ -257,12 +257,11 @@ public class EnhanceGUIListener implements Listener {
             }
     
             enhanceGUI.showFailureBlock(player, inventory);
+            int maxDurability = Utils.getMaxDurability(itemToEnhance);
+            int durabilityLoss = currentLevel >= 16 && currentLevel <= 20 ? (int) (maxDurability * 0.2) : (int) (maxDurability * 0.1);
+            int newDurability = Utils.getDurability(itemToEnhance) - durabilityLoss;
+            Utils.setDurability(itemToEnhance, newDurability);
         }
-
-        // int maxDurability = Utils.getMaxDurability(itemToEnhance);
-        // int durabilityLoss = currentLevel >= 16 && currentLevel <= 20 ? (int) (maxDurability * 0.2) : (int) (maxDurability * 0.1);
-        // int newDurability = Utils.getDurability(itemToEnhance) - durabilityLoss;
-        // Utils.setDurability(itemToEnhance, newDurability);
 
     
         if (blackStone.getAmount() > 1) {

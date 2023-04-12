@@ -60,8 +60,10 @@ public class GiveItemsCommand implements CommandExecutor {
                 itemToGive = CustomItems.createConcentratedMagicalBlackStoneArmor();
             } else if (itemType.equals("pstone")) {
                 itemToGive = CustomItems.createProtectionRune();
+            } else if (itemType.equals("memoryfragment")) {
+                itemToGive = CustomItems.createMemoryFragment();
             } else {
-                sender.sendMessage("Usage: /giveblackstone <player> <weapon|armor|cweapon|carmor> <amount>");
+                sender.sendMessage("Usage: /giveblackstone <player> <weapon|armor|cweapon|carmor|memoryfragment> <amount>");
                 return true;
             }
 

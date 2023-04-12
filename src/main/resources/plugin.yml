@@ -1,5 +1,5 @@
 name: Enhancing
-version: 1.3.0
+version: 1.4.0
 main: com.obotach.enhancer.Enhancing
 description: Yes, it's a plugin that enhances items!
 author: Oze Botach
@@ -19,6 +19,10 @@ commands:
     usage: /<command> <level>
     permission: enhancing.enhanceitem
   protectionshop:
+    description: Reloads the plugin's config.yml
+    usage: /protectionshop
+    # permission: enhancing.reloadconfig
+  erepair:
     description: Reloads the plugin's config.yml
     usage: /protectionshop
     # permission: enhancing.reloadconfig
